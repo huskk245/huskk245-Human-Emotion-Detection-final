@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+
+    <title>Human Emotion Detection</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .jumbotron {
+            background-color: rgb(245, 245, 245);
+            /* Add transparency to jumbotron */
+            margin-top: 100px;
+            border: 1px solid white;
+            border-radius: 85px;
+            /* Add border radius to create rounded corners */
+            padding: 30px;
+            color: black;
+        }
+
+        .jumbotron h1,
+        .jumbotron p {
+            font-weight: bold;
+            /* Make the text inside the jumbotron bolder */
+        }
+
+        #videoContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            margin-bottom: 50px;
+            /* Add more space below the camera layout */
+            width: 100%;
+            /* Set width to fill the container */
+        }
+
+        #videoElement {
+            width: 400%;
+            /* Set width to fill its container */
+            height: auto;
+            /* Maintain aspect ratio */
+            max-width: none;
+            /* Remove maximum width constraint */
+            max-height: 600px;
+            /* Set maximum height */
+            border-radius: 20px;
+            margin-top: 100px;
+            /* Rounded border */
+        }
+
+        body {
+            background-image: url('/static/webimg.jpg');
+            /* Replace 'background-image.jpg' with your image file */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* Ensures background image stays fixed while scrolling */
+            background-position: center;
+            padding-bottom: 200px;
+            /* Add more space below the content */
+        }
+
+        .icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            /* Ensure the icon is above other content */
+        }
+
+        #animatedIcon {
+            width: 50%;
+            /* Adjust width as needed */
+            max-width: 300px;
+            /* Set maximum width */
+            height: auto;
+            /* Maintain aspect ratio */
+            border-radius: 50%;
+            /* Make the border rounded */
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            #animatedIcon {
+                width: 60%;
+                /* Adjust width for smaller screens */
+                max-width: 250px;
+                /* Set maximum width */
+            }
+        }
+
+
+        .navbar-dark.bg-dark {
+            background-color: #000 !important;
+            /* Absolute black */
+        }
+
+        .navbar-dark.bg-dark .navbar-brand,
+        .navbar-dark.bg-dark .navbar-nav .nav-link {
+            color: #fff !important;
+            /* White font color */
+        }
+
+        .btn-purple {
+            background-color: purple;
+            border-color: purple;
+            color: white;
+        }
+
+        .btn-black {
+            background-color: #000;
+            border-color: #000;
+            color: white;
+        }
+
+        .btn-black:hover {
+            background-color: #555;
+            /* Change to desired shade of grey */
+            border-color: #555;
+            /* Change to desired shade of grey */
+            color: white;
+        }
+
+        footer {
+            background-color: rgb(48, 49, 52);
+            color: white;
+            /* Light gray background color */
+            padding: 20px 0;
+            /* Add some padding top and bottom */
+            text-align: center;
+            /* Center the content */
+            position: fixed;
+            /* Position the footer */
+            bottom: 0;
+            /* Anchor the footer to the bottom */
+            width: 100%;
+            /* Set the width to fill the entire viewport */
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Human Emotion Detection</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" style="color: white;">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="index2.html" style="color: white;">Info</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="index3.html" style="color: white;">Technology</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Human Emotion Detection</h1>
+            <p class="lead">Upload an image or use your camera for real-time detection</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="emotionForm">
+                            <div class="form-group">
+                                <input type="file" class="form-control-file" id="imageInput" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-purple btn-lg btn-block">Detect Emotion from
+                                Image</button>
+
+                        </form>
+                        <button type="button" class="btn btn-black btn-lg btn-block mt-3" id="cameraBtn">
+                            Use Camera for Real-time Detection
+                        </button>
+
+                        <button type="button" class="btn btn-outline-danger btn-lg btn-block mt-3" id="stopCameraBtn"
+                            style="display: none;">Stop Camera</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6 offset-md-3">
+                <div id="emotionDisplay" class="alert alert-success" role="alert" style="display: none;">
+                    Detected Emotion: <span id="detectedEmotion"></span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div style="justify-content: center; display: flex; margin-top: 30px;"><img src="{{ url_for('video_feed') }}"></div>
+        </div>
+    </div>
+    
+
+
+    <!-- Animated Icon -->
+    <div class="icon" id="animatedIcon"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Human Emotion Detection</p>
+            <p>Contact: vinaypaka38@gmail.com</p>
+        </div>
+    </footer>
+
+
+
+
+    <!-- Bootstrap JS and jQuery (for form submission) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.11/lottie.min.js"></script>
+
+    <script>
+        var videoStream;
+
+        $(document).ready(function () {
+            $('#emotionForm').submit(function (e) {
+                e.preventDefault();
+                var formData = new FormData();
+                formData.append('image', $('#imageInput')[0].files[0]);
+                $.ajax({
+                    type: 'POST',
+                    url: '/detect_emotion', // Changed to '/detect_emotion'
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.emotions && response.emotions.length > 0) {
+                            // Display the first detected emotion
+                            $('#emotionDisplay').show();
+                            $('#detectedEmotion').text(response.emotions[0]);
+                        } else {
+                            // If no emotions detected, show a message
+                            $('#emotionDisplay').show();
+                            $('#detectedEmotion').text('No emotion detected.');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        $('#result').text('Error: ' + error).show();
+                    }
+                });
+            });
+
+
+            var video = document.getElementById("videoElement");
+            var cameraBtn = document.getElementById("cameraBtn");
+            var stopCameraBtn = document.getElementById("stopCameraBtn");
+
+            cameraBtn.addEventListener('click', function () {
+                if (navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(function (stream) {
+                            video.srcObject = stream;
+                            video.style.display = "block";
+                            stopCameraBtn.style.display = "block";
+                            cameraBtn.style.display = "none";
+                        })
+                        .catch(function (err0r) {
+                            console.log("Something went wrong!");
+                        });
+                }
+            });
+
+            stopCameraBtn.addEventListener('click', function () {
+                var stream = video.srcObject;
+                var tracks = stream.getTracks();
+
+                tracks.forEach(function (track) {
+                    track.stop();
+                });
+
+                video.srcObject = null;
+                video.style.display = "none";
+                stopCameraBtn.style.display = "none";
+                cameraBtn.style.display = "block";
+            });
+
+
+            // Load and play the Lottie animation
+            var animation = bodymovin.loadAnimation({
+                container: document.getElementById('animatedIcon'),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: '/static/Animation.json' // Replace 'Animation.json' with the correct path to your JSON file
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

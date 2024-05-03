@@ -192,7 +192,6 @@
                             </div>
                             <button type="submit" class="btn btn-purple btn-lg btn-block">Detect Emotion from
                                 Image</button>
-
                         </form>
                         <button type="button" class="btn btn-black btn-lg btn-block mt-3" id="cameraBtn">
                             Use Camera for Real-time Detection
@@ -213,10 +212,12 @@
             </div>
         </div>
         <div>
-            <div style="justify-content: center; display: flex; margin-top: 30px;"><img src="{{ url_for('video_feed') }}"></div>
+            <div style="justify-content: center; display: flex; margin-top: 30px;" id="videoContainer">
+                <img src="{{ url_for('video_feed') }}" id="videoFeed" style="display: none;">
+            </div>
         </div>
     </div>
-    
+
 
 
     <!-- Animated Icon -->
@@ -271,37 +272,16 @@
             });
 
 
-            var video = document.getElementById("videoElement");
-            var cameraBtn = document.getElementById("cameraBtn");
-            var stopCameraBtn = document.getElementById("stopCameraBtn");
-
-            cameraBtn.addEventListener('click', function () {
-                if (navigator.mediaDevices.getUserMedia) {
-                    navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(function (stream) {
-                            video.srcObject = stream;
-                            video.style.display = "block";
-                            stopCameraBtn.style.display = "block";
-                            cameraBtn.style.display = "none";
-                        })
-                        .catch(function (err0r) {
-                            console.log("Something went wrong!");
-                        });
-                }
+            document.getElementById("cameraBtn").addEventListener("click", function () {
+                document.getElementById("videoFeed").style.display = "block";
+                document.getElementById("stopCameraBtn").style.display = "block";
+                document.getElementById("cameraBtn").style.display = "none";
             });
 
-            stopCameraBtn.addEventListener('click', function () {
-                var stream = video.srcObject;
-                var tracks = stream.getTracks();
-
-                tracks.forEach(function (track) {
-                    track.stop();
-                });
-
-                video.srcObject = null;
-                video.style.display = "none";
-                stopCameraBtn.style.display = "none";
-                cameraBtn.style.display = "block";
+            document.getElementById("stopCameraBtn").addEventListener("click", function () {
+                document.getElementById("videoFeed").style.display = "none";
+                document.getElementById("stopCameraBtn").style.display = "none";
+                document.getElementById("cameraBtn").style.display = "block";
             });
 
 
